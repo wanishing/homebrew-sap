@@ -2,7 +2,7 @@ class Sap < Formula
   desc "kubectl wrapper for spark applications"
   homepage ""
   url "https://github.com/wanishing/sap/archive/refs/tags/v0.0.2.tar.gz"
-  sha256 "22088db6210828f4998455938d4b2e6671526b69d981c76b95bcfb05567aef28"
+  sha256 "d0640e0f791dfd0eeb40acd053c624342002caee4e87c569223555c43e333274"
   license "MIT"
   version "0.0.2"
   
