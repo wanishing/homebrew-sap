@@ -5,9 +5,10 @@ class Sap < Formula
   sha256 "22088db6210828f4998455938d4b2e6671526b69d981c76b95bcfb05567aef28"
   license "MIT"
   version "0.0.2"
-
+  
   depends_on "borkdude/brew/babashka" => :build
-
+  bottle :unneeded
+  
   def install
     bin.install "sap.clj" => "sap"
   end
