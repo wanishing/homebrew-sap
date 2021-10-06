@@ -7,7 +7,6 @@ class Sap < Formula
   version "0.0.2"
   
   depends_on "borkdude/brew/babashka" => :build
-  bottle :unneeded
   
   def install
     bin.install "sap.clj" => "sap"
