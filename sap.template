@@ -1,0 +1,18 @@
+class Sap < Formula
+  desc "kubectl wrapper for spark applications"
+  homepage ""
+  url "https://github.com/wanishing/sap/archive/refs/tags/v${VERSION}.tar.gz"
+  sha256 "${SHA}"
+  license "MIT"
+  version "${VERSION}"
+  
+  depends_on "borkdude/brew/babashka" => :build
+  
+  def install
+    bin.install "sap.clj" => "sap"
+  end
+
+  test do
+    %x[sap help]
+  end
+end
