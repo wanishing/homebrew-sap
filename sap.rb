@@ -1,10 +1,10 @@
 class Sap < Formula
   desc "kubectl wrapper for spark applications"
   homepage ""
-  url "https://github.com/wanishing/sap/releases/download/v0.0.3/sap-0.0.3-macos.tar.gz"
-  sha256 "7b7e90d160cdd8baa54bf7fb30e5c1d288a512854a44757464008fb5a1304436"
+  url "https://github.com/wanishing/sap/releases/download/v0.0.4/sap-0.0.4-macos.tar.gz"
+  sha256 "5fff5c607bdcf7c0deabe8863a2c94d41ddf7870df502e4f9d2ebc4aacdea1c4"
   license "MIT"
-  version "0.0.3"
+  version "0.0.4"
   
   depends_on "borkdude/brew/babashka" => :build
   
