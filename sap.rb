@@ -9,7 +9,7 @@ class Sap < Formula
   depends_on "borkdude/brew/babashka" => :build
   
   def install
-    bin.install "sap"
+    bin.install "script/sap.clj" => "sap"
   end
 
   test do
