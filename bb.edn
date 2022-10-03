@@ -1,0 +1,73 @@
+{:tasks
+ {:requires ([babashka.curl :as curl]
+                    [babashka.fs :as fs]
+                    [clojure.java.io :as io]
+                    [clojure.string :as str]
+                    [cheshire.core :as json]
+                    [selmer.parser :as parser])
+
+         :init (do
+
+                 (defn template [name]
+                   (format "templates/%s.template.rb" name))
+
+                 (defn formula [name]
+                   (format "Formula/%s.rb"))
+
+                 (defn ->hex [file]
+                   (let [digest (java.security.MessageDigest/getInstance "SHA-256")
+                         hash (.digest digest (fs/read-all-bytes file))
+                         hex (.toString (BigInteger. 1 hash) 16)
+                         zeroes (str/join (repeat (- 64 (count hex)) "0"))
+                         hex (str zeroes hex)]
+                     hex))
+
+                 (defn find-hex [url]
+                   (let [stream (:body (curl/get url {:as :stream}))
+                         file (doto (fs/file "sap.tmp")
+                                fs/delete-on-exit)
+                         _ (io/copy stream file)
+                         hex (->hex file)]
+                     hex))
+
+                 (defn fetch-version [url]
+                   (-> (curl/get url)
+                       :body
+                       (json/parse-string true)
+                       first
+                       :name
+                       (subs 1)))
+
+                 (defn write-formula [template-name formula-name values]
+                   (let [formula (format "Formula/%s.rb" formula-name)
+                         write (partial spit formula)
+                         tmpl (template template-name)]
+                     (println (format "Writing %s from %s" formula tmpl))
+                     (-> tmpl
+                         slurp
+                         (parser/render values)
+                         write)))
+
+                 (defn publish [version]
+                   (shell "git add Formula")
+                   (shell "git commit -m " version)
+                   (shell "git push"))
+
+                 (defn update-brew [{:keys [name tags linux-url-fmt mac-url-fmt]}]
+                   (let [version (fetch-version tags)
+                         linux-url (format linux-url-fmt version version)
+                         mac-url (format mac-url-fmt version version)
+                         values           {:version version
+                                           :linux-url linux-url
+                                           :linux-sha (find-hex linux-url)
+                                           :mac-url mac-url
+                                           :mac-sha (find-hex mac-url)}]
+                     (write-formula name name values)
+                     (write-formula name (format "%s@%s" name version) (merge values {:at (str "AT" (str/replace version "." ""))}))
+                     (publish version))))
+
+         update-sap (update-brew {:name "sap"
+                                  :tags "https://api.github.com/repos/wanishing/sap/tags"
+                                  :linux-url-fmt "https://github.com/wanishing/sap/releases/download/v%s/sap-%s-ubuntu-22.04.zip"
+                                  :mac-url-fmt "https://github.com/wanishing/sap/releases/download/v%s/sap-%s-macos-11.zip"})
+         }}
